@@ -1,0 +1,8 @@
+﻿@model Client.MetaData.ProductViewModel
+
+<div id="product_@Model.Id" class="border p-3 mb-2">
+    <h4>@Model.Name</h4>
+    <p>Price: @Model.Price.ToString("C")</p>
+    <button class="editProductButton btn btn-sm btn-warning" data-id="@Model.Id" data-name="@Model.Name" data-price="@Model.Price">Edit</button>
+    <button class="deleteProductButton btn btn-sm btn-danger" data-id="@Model.Id">Delete</button>
+</div>

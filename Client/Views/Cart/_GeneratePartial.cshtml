@@ -1,0 +1,9 @@
+﻿@model Client.MetaData.OrderItemViewModel
+
+
+<form method="post" asp-action="GeneratePurchaseOrder">
+    <button type="submit" class="btn btn-success">Checkout</button>
+    <input type="hidden" name="Id" value="@Model.Id" />
+    <input type="hidden" name="OrderId" value="@Model.Order.Id" />
+</form>
+
