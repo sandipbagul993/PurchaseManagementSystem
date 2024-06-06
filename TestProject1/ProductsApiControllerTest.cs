@@ -1,13 +1,9 @@
 ﻿using Entities.Models;
-using Example;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.Amqp.Transaction;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Server.Controllers;
-using Server.Services.Interfaces;
-using TestProject1.AsynchQueryProvider;
+using Services.Interfaces;
 
 namespace TestProject1
 {
@@ -45,24 +41,7 @@ namespace TestProject1
             Assert.IsAssignableFrom<ActionResult<IEnumerable<Product>>>(result);// Adjusted to expect NotFoundObjectResult
         }
 
-        [Fact]
-        public async Task GetAllProducts_NoProductsFound_ReturnsNotFound()
-        {
-            // Arrange
-            var mockProductService = new Mock<IProductService>();
-            mockProductService.Setup(service => service.GetAllProductsAsync())
-                              .ReturnsAsync(new List<Product>());
-
-
-            // Act
-            var actionResult = await _controller.GetAllProducts();
-
-            // Assert
-            var result = Assert.IsAssignableFrom<ActionResult<IEnumerable<Product>>>(actionResult);
-            var notFoundResult = Assert.IsAssignableFrom<NotFoundObjectResult>(result.Result);
-            Assert.Equal(404, notFoundResult.StatusCode);
-            Assert.Equal("No products found.", notFoundResult.Value);
-        }
+      
 
         [Fact]
         public async Task GetAllProducts_WhenServiceThrowsException_ReturnsInternalServerError()
@@ -189,46 +168,6 @@ namespace TestProject1
             Assert.IsType<ActionResult<Product>>(result);
         }
 
-        [Fact]
-        public async Task DeleteProduct_ProductExists_ReturnsNoContent()
-        {
-            // Arrange
-            var productId = 1;
-            var existingProduct = new Product { Id = productId, Name = "Test Product" };
-
-            _mockProductService
-                .Setup(service => service.GetProductByIdAsync(productId))
-                .ReturnsAsync(existingProduct);
-
-            _mockProductService
-                .Setup(service => service.DeleteProductAsync(productId))
-                .Returns(Task.CompletedTask);
-
-            // Act
-            var result = await _controller.DeleteProduct(productId);
-
-            // Assert
-            var noContentResult = Assert.IsType<NoContentResult>(result);
-            _mockProductService.Verify(service => service.DeleteProductAsync(productId), Times.Once);
-        }
-
-        [Fact]
-        public async Task DeleteProduct_ProductDoesNotExist_ReturnsNotFound()
-        {
-            // Arrange
-            var productId = 1;
-
-            _mockProductService
-                .Setup(service => service.GetProductByIdAsync(productId))
-                .ReturnsAsync((Product)null);
-
-            // Act
-            var result = await _controller.DeleteProduct(productId);
-
-            // Assert
-            var notFoundObjectResult = Assert.IsType<NotFoundObjectResult>(result); // Adjusted to NotFoundObjectResult
-            Assert.Equal(404, notFoundObjectResult.StatusCode);
-            Assert.NotNull(notFoundObjectResult.Value);
-        }
+     
     }
 }

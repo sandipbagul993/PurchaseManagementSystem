@@ -23,11 +23,7 @@ namespace Server.Controllers
         {
             try
             {
-                var orderItems = await _cartService.GetOrderItemsAsync(addToCartRequest);
-                //if (orderItems == null || !orderItems.Any())
-                //{
-                //    return NotFound("Order not found or no items in order.");
-                //}
+                var orderItems = await _cartService.GetOrderItemsAsync(addToCartRequest);        
                 return Ok(orderItems);
             }
             catch (Exception ex)

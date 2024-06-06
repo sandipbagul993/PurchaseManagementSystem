@@ -27,11 +27,7 @@ namespace Server.Controllers
         {
             try
             {
-                var products = await _productService.GetAllProductsAsync();
-                //if (products == null || products.Count == 0)
-                //{
-                //    return NotFound("No products found.");
-                //}
+                var products = await _productService.GetAllProductsAsync();         
                 return Ok(products);
             }
             catch (Exception ex)

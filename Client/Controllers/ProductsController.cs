@@ -36,7 +36,7 @@ namespace Client.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "Products");
+                return StatusCode(500,"Internal Server Error");
             }
         }
 

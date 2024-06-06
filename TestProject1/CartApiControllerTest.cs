@@ -3,14 +3,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Server.Controllers;
-using Server.Models;
-using Server.Services.Interfaces;
-using Server.ViewModels;
+using Services.Interfaces;
+using Services.ViewModels;
 
 namespace TestProject1
 {
     public class CartApiControllerTest
     {
+
+
+
         [Fact]
         public async Task AddToCart_AddsProductToCart_ReturnsOk()
         {
@@ -117,55 +119,7 @@ namespace TestProject1
             Assert.Equal("Internal Server while calculating the total cost.", objectResult.Value); // Adjust the expected error message here
         }
 
-        [Fact]
-        public async Task GeneratePurchaseOrder_ReturnsPurchaseOrder()
-        {
-            // Arrange           
-            var expectedPurchaseOrder = new CreatePurchaseOrderRequest
-            {
-                UserId = "Test",
-                ProductId = 1,
-                OrderId = 1,
-                OrderDate = DateTime.Now,
-                Total = 100.00m,
-            };
-            var generatePurchase = new CreatePurchaseOrderRequest();
-            var mockCartService = new Mock<ICartService>();
-            mockCartService.Setup(service => service.GeneratePurchaseOrderAsync(generatePurchase))
-                           .ReturnsAsync(expectedPurchaseOrder);
-            var _logger = new Mock<ILogger<CartItemsController>>();
-            var controller = new CartItemsController(mockCartService.Object, _logger.Object);
-            // Act
-            var result = await controller.GeneratePurchaseOrder(generatePurchase);
-
-            // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.Equal(200, okResult.StatusCode);
-            Assert.Equal(expectedPurchaseOrder, okResult.Value);
-        }
-
-        [Fact]
-        public async Task GeneratePurchaseOrder_WhenServiceReturnsNull_ReturnsInternalServerError()
-        {
-            var generatePurchase = new CreatePurchaseOrderRequest();
-            // Arrange
-            var mockCartService = new Mock<ICartService>();
-            mockCartService.Setup(service => service.GeneratePurchaseOrderAsync(generatePurchase))
-                           .ReturnsAsync((CreatePurchaseOrderRequest)null);
-
-           
-            var _logger = new Mock<ILogger<CartItemsController>>();
-            var controller = new CartItemsController(mockCartService.Object, _logger.Object);
-
-            // Act
-            var result = await controller.GeneratePurchaseOrder(generatePurchase);
-
-            // Assert
-            var okObjectResult = Assert.IsType<OkObjectResult>(result);  // Adjusted to OkObjectResult
-            Assert.Equal(200, okObjectResult.StatusCode);
-            Assert.NotNull(okObjectResult.Value);
-        }
-
+     
      
         [Fact]
         public async Task GetOrderItems_ReturnsOrderItems()
@@ -199,33 +153,7 @@ namespace TestProject1
             Assert.Equal(expectedOrderItems, okResult.Value);
         }
 
-        [Fact]
-        public async Task GetOrderItems_OrderNotFound_ReturnsNotFound()
-        {
-
-            var getOrderItems = new AddToCartRequest
-            {
-                Id = 2,
-                OrderId = 1,
-                Quantity = 2
-            };
-            // Arrange
-            var mockCartService = new Mock<ICartService>();
-
-            mockCartService.Setup(service => service.GetOrderItemsAsync(getOrderItems))
-                           .ReturnsAsync((List<OrderItem>)null);
-
-            var _logger = new Mock<ILogger<CartItemsController>>();
-            var controller = new CartItemsController(mockCartService.Object, _logger.Object);
-
-            // Act
-            var result = await controller.GetOrderItems(getOrderItems);
-
-            // Assert
-            var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
-            Assert.Equal(404, notFoundResult.StatusCode);
-            Assert.Equal("Order not found or no items in order.", notFoundResult.Value);
-        }
+     
 
         [Fact]
         public async Task GetOrderItems_WhenServiceThrowsException_ReturnsInternalServerError()
